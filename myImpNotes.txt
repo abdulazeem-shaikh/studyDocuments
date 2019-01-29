@@ -1,3 +1,11 @@
 
 repos vs template
 https://stackoverflow.com/questions/17008947/whats-the-difference-between-spring-datas-mongotemplate-and-mongorepository
+
+
+Swagger tool 
+Base API designing
+Mongo DB.
+SQL Query learning
+Collection java learning
+Techinical question.
