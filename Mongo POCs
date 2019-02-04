@@ -1,0 +1,218 @@
+
+API document URL : http://mongodb.github.io/mongo-java-driver/3.9/javadoc/overview-summary.html
+
+
+Json with Mongo 
+---------------------------------------
+The BSON library comprehensively supports BSON, the data storage and network transfer format that MongoDB uses for “documents”. BSON, short for Binary JSON, is a binary-encoded serialization of JSON-like documents.
+Documents: Documentation of the driver’s support for BSON document representations
+Readers and Writers: Documentation of the driver’s support for stream-based reading and writing of BSON documents
+JSON: Documentation of the driver’s support for JSON
+Codec and CodecRegistry: Documentation of the driver’s Codec API, an abstraction for producing and consuming BSON document representations using the stream-based readers and writers
+POJOs: Documentation of the driver’s POJO support.
+
+
+
+1- MongoDB- short definition
+----------------------------
+MongoDB is a cross-platform, document oriented database that provides, high performance, high availability, and easy scalability. MongoDB works on concept of collection and document.
+Database
+Database is a physical container for collections. Each database gets its own set of files on the file system. A single MongoDB server typically has multiple databases.
+Collection
+Collection is a group of MongoDB documents. It is the equivalent of an RDBMS table. A collection exists within a single database. Collections do not enforce a schema. Documents within a collection can have different fields. Typically, all documents in a collection are of similar or related purpose.
+Document
+A document is a set of key-value pairs. Documents have dynamic schema. Dynamic schema means that documents in the same collection do not need to have the same set of fields or structure, and common fields in a collection's documents may hold different types of data.
+The following table shows the relationship of RDBMS terminology with MongoDB.
+
+
+
+Approach to work with Monngo java
+
+1- Use Repostories interface
+
+2-Use MongoOperation interface
+
+3- Mongo Collection insterface
+
+
+
+Main interaces
+
+1-Repository. 
+2-CrudRepository 
+3-PagingAndSortingRepository
+
+The central interface in the Spring Data repository abstraction is Repository. It takes the domain class to manage as well as the ID type of the domain class as type arguments. This interface acts primarily as a marker interface to capture the types to work with and to help you to discover interfaces that extend this one. The CrudRepository provides sophisticated CRUD functionality for the entity class that is being managed.
+ 
+
+Mongo java driver 
+-----------------
+
+1- get the client as below
+
+
+Create client : MongoClient mongoClient = MongoClients.create();
+
+OR
+
+MongoClient mongoClient = MongoClients.create(
+        MongoClientSettings.builder()
+                .applyToClusterSettings(builder ->
+                        builder.hosts(Arrays.asList(new ServerAddress("hostOne"))))
+                .build());
+
+
+2- get the reference to the db 
+
+MongoDatabase database = mongoClient.getDatabase("mydb");
+
+
+3 - getting the collection
+
+MongoCollection<Document> collection = database.getCollection("test");
+
+
+4- sample code to create the inetrface
+
+collection.insertOne(doc);
+
+
+
+
+
+
+
+
+
+
+
+2- data type detail 
+----------------------
+
+String − This is the most commonly used datatype to store the data. String in MongoDB must be UTF-8 valid.
+Integer − This type is used to store a numerical value. Integer can be 32 bit or 64 bit depending upon your server.
+Boolean − This type is used to store a boolean (true/ false) value.
+Double − This type is used to store floating point values.
+Min/ Max keys − This type is used to compare a value against the lowest and highest BSON elements.
+Arrays − This type is used to store arrays or list or multiple values into one key.
+Timestamp − ctimestamp. This can be handy for recording when a document has been modified or added.
+Object − This datatype is used for embedded documents.
+Null − This type is used to store a Null value.
+Symbol − This datatype is used identically to a string; however, it's generally reserved for languages that use a specific symbol type.
+Date − This datatype is used to store the current date or time in UNIX time format. You can specify your own date time by creating object of Date and passing day, month, year into it.
+Object ID − This datatype is used to store the document’s ID.
+Binary data − This datatype is used to store binary data.
+Code − This datatype is used to store JavaScript code into the document.
+Regular expression − This datatype is used to store regular expression.
+
+
+3-Variouse Operatin on Mongo DB.
+----------------------------
+>db.COLLECTION_NAME.insert(document).
+>db.COLLECTION_NAME.find()
+>db.COLLECTION_NAME.update(SELECTION_CRITERIA, UPDATED_DATA)
+>db.COLLECTION_NAME.remove(DELLETION_CRITTERIA)
+>db.COLLECTION_NAME.find({},{KEY:1})
+> >db.COLLECTION_NAME.find().limit(NUMBER)
+>db.COLLECTION_NAME.aggregate(AGGREGATE_OPERATION)
+
+
+
+POJO support
+------------------
+Codec and CodecRegistry
+
+http://mongodb.github.io/mongo-java-driver/3.9/bson/pojos/
+
+
+sample code to implements
+Using the CodecRegistry
+There are multiple ways to set the pojoCodecRegistry for use:
+You can set it when instantiating a MongoClient object:
+
+
+MongoClientSettings settings = MongoClientSettings.builder()
+        .codecRegistry(pojoCodecRegistry)
+        .build();
+
+MongoClient mongoClient = MongoClients.create(settings);
+ 
+database = database.withCodecRegistry(pojoCodecRegistry);
+ 
+collection = collection.withCodecRegistry(pojoCodecRegistry);
+
+MongoCollection<Person> collection = database.getCollection("people", Person.class);
+
+
+Bulk operation
+------------------------
+There are two types of bulk operations, ordered and unordered bulk operations.
+1- Ordered bulk operations execute all the operation in order and error out on the first write error.
+2- Unordered bulk operations execute all the operations and report any the errors. Unordered bulk operations do not guarantee order of execution.
+
+1. bulk operation 
+-----------------
+collection.bulkWrite(
+  Arrays.asList(new InsertOneModel<>(new Document("_id", 4)),
+                new InsertOneModel<>(new Document("_id", 5)),
+                new InsertOneModel<>(new Document("_id", 6)),
+                new UpdateOneModel<>(new Document("_id", 1),
+                                     new Document("$set", new Document("x", 2))),
+                new DeleteOneModel<>(new Document("_id", 2)),
+                new ReplaceOneModel<>(new Document("_id", 3),
+                                      new Document("_id", 3).append("x", 4))));
+
+
+collection.bulkWrite(
+  Arrays.asList(new InsertOneModel<>(new Document("_id", 4)),
+                new InsertOneModel<>(new Document("_id", 5)),
+                new InsertOneModel<>(new Document("_id", 6)),
+                new UpdateOneModel<>(new Document("_id", 1),
+                                     new Document("$set", new Document("x", 2))),
+                new DeleteOneModel<>(new Document("_id", 2)),
+                new ReplaceOneModel<>(new Document("_id", 3),
+                                      new Document("_id", 3).append("x", 4))),
+  new BulkWriteOptions().ordered(false));
+
+
+2- Aggregate operation
+----------------------
+
+collection.aggregate(
+  Arrays.asList(
+          Aggregates.match(Filters.eq("categories", "Bakery")),
+          Aggregates.group("$stars", Accumulators.sum("count", 1))
+  )
+).forEach(printBlock);
+
+
+collection.aggregate(
+      Arrays.asList(
+          Aggregates.project(
+              Projections.fields(
+                    Projections.excludeId(),
+                    Projections.include("name"),
+                    Projections.computed(
+                            "firstCategory",
+                            new Document("$arrayElemAt", Arrays.asList("$categories", 0))
+                    )
+              )
+          )
+      )
+).forEach(printBlock);
+
+
+mongodump -- mongodump --host localost --port 3017 --username user --password "pass" --out /opt/backup/mongodump
+
+restore  -- mongorestore --host mongodb1.example.net --port 3017 --username user --password 'pass' /opt/backup/mongodump-2013-10-24
+
+
+
+
+
+
+
+
+
+
+
