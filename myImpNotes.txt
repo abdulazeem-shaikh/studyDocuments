@@ -9,3 +9,62 @@ Mongo DB.
 SQL Query learning
 Collection java learning
 Techinical question.
+
+
+
+db.getCollection('CveVulnearableCollection').aggregate([
+
+  {  "$match" : { "belongto.imt-2.dsid" : "88888"  , "aggregatedAt" : {"$gte" : ISODate("2017-03-27T00:00:00.000Z") , "$lte" :  ISODate("2017-05-27T00:00:00.000Z") }} },
+  { "$project" : { "reponame":1 ,  "dsid" :  "$belongto.owner.dsid" ,"name" :  "$belongto.owner.name"  , "severiyCount" :1 } }
+ 
+])
+
+==========================================================================================
+/**
+ * 
+ */
+package com.alloy.model;
+
+import java.util.Map;
+
+/**
+ * @author Abdul Azeem
+ *
+ */
+public class TechnologySeverityStats {
+
+	private String projectName;
+	private String owner;
+	private Map<String, Integer> severityCount;
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public Map<String, Integer> getSeverityCount() {
+		return severityCount;
+	}
+
+	public void setSeverityCount(Map<String, Integer> severityCount) {
+		this.severityCount = severityCount;
+	}
+
+	@Override
+	public String toString() {
+		return "SeverityStats [projectName=" + projectName + ", owner=" + owner + ", severityCount=" + severityCount
+				+ "]";
+	}
+
+}
