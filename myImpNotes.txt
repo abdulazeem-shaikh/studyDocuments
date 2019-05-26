@@ -68,3 +68,10 @@ public class TechnologySeverityStats {
 	}
 
 }
+
+
+
+
+
+
+db.getCollection('CveVulnearableCollection').count({"belongto.imt-1.dsid" : "991919" })
